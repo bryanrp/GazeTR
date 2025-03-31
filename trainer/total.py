@@ -109,7 +109,7 @@ def main(config):
 
                 # -------------- forward -------------
                 for key in data:
-                    if key != 'name': data[key] = data[key].cuda()
+                    if key != 'name' and key != 'filename': data[key] = data[key].cuda()
 
                 anno = anno.cuda() 
                 loss = net.loss(data, anno)
@@ -144,6 +144,7 @@ def main(config):
 
 
 if __name__ == "__main__":
+    torch.cuda.empty_cache()
 
     parser = argparse.ArgumentParser(description='Pytorch Basic Model Training')
 

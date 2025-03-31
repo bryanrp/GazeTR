@@ -128,6 +128,7 @@ class trainloader(Dataset):
     data = edict()
     data.face = img
     data.name = anno.name
+    data.filename = anno.face
 
     return data, label
 

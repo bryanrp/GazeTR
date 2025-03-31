@@ -1,0 +1,27 @@
+---
+test:
+
+    load:
+        begin_step: 50
+        end_step: 50
+        steps: 5
+
+    data: 
+        # image: "/userdata/ETH.zip/ETH-Gaze/Image/train"
+        # label: "/userdata/ETH.zip/ETH-Gaze/Label/trainYP.label"
+        # image: "C:/Users/victus/Documents/git-project/capstone/dataset-sample/xgaze-full/Image"
+        # label: "C:/Users/victus/Documents/git-project/capstone/dataset-sample/xgaze-random-25/Label/xgaze-random-25-test.label"
+        image: "C:/Users/victus/Documents/git-project/capstone/dataset-sample/xgaze-full/Image"
+        label: "C:/Users/victus/Documents/git-project/capstone/GazeTR/GazeTR/label/speedrun/xgaze-random-25-test-16.label"
+        name: ethtrain
+        header: True
+        isFolder: False
+
+    savename: "evaluation"
+
+    device: 0
+
+    reader: reader
+
+# dropout = 0
+# dim_feed = 512

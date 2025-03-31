@@ -75,7 +75,8 @@ class Model(nn.Module):
         dropout = 0.1
         num_layers=6
 
-        self.base_model = resnet18(pretrained=False, maps=maps)
+        # self.base_model = resnet18(pretrained=False, maps=maps)
+        self.base_model = resnet18(pretrained=True, maps=maps)
 
         # d_model: dim of Q, K, V 
         # nhead: seq num
@@ -111,7 +112,8 @@ class Model(nn.Module):
         cls = self.cls_token.repeat( (1, batch_size, 1))
         feature = torch.cat([cls, feature], 0)
         
-        position = torch.from_numpy(np.arange(0, 50)).cuda()
+        # position = torch.from_numpy(np.arange(0, 50)).cuda()
+        position = torch.from_numpy(np.arange(0, 50)).long().cuda()
 
         pos_feature = self.pos_embedding(position)
 

@@ -57,21 +57,21 @@ def main(train, test):
 
         net.cuda(); net.load_state_dict(statedict); net.eval()
 
-        length = len(dataset); accs = 0; count = 0
+        length = len(dataset); accs = 0; count = 0; accs_swapped = 0
 
-        logname = f"{saveiter}.log"
+        logname = f"{saveiter}-test-16.log"
 
         outfile = open(os.path.join(logpath, logname), 'w')
-        outfile.write("name results gts\n")
-        
+        outfile.write("filenames origins results gts\n")
 
         with torch.no_grad():
             for j, (data, label) in enumerate(dataset):
 
                 for key in data:
-                    if key != 'name': data[key] = data[key].cuda()
+                    if key != 'name' and key != 'filename': data[key] = data[key].cuda()
 
-                names =  data["name"]
+                filenames = data["filename"]
+                names = data["name"]
                 gts = label.cuda()
            
                 gazes = net(data)
@@ -86,14 +86,20 @@ def main(train, test):
                                 gtools.gazeto3d(gaze),
                                 gtools.gazeto3d(gt)
                             )
+
+                    # Swap predicted gaze coordinates
+                    gaze_swapped = np.array([gaze[1], gaze[0]])
+                    accs_swapped += gtools.angular(gtools.gazeto3d(gaze_swapped), gtools.gazeto3d(gt))
             
+                    filename = [filenames[k]]
                     name = [names[k]]
                     gaze = [str(u) for u in gaze] 
                     gt = [str(u) for u in gt] 
-                    log = name + [",".join(gaze)] + [",".join(gt)]
+                    log = filename + name + [",".join(gaze)] + [",".join(gt)]
                     outfile.write(" ".join(log) + "\n")
 
-            loger = f"[{saveiter}] Total Num: {count}, avg: {accs/count}"
+            # loger = f"[{saveiter}] Total Num: {count}, avg: {accs/count}"
+            loger = f"[{saveiter}] Total Num: {count}, avg: {accs/count}, avg_swapped: {accs_swapped/count}"
             outfile.write(loger)
             print(loger)
         outfile.close()
