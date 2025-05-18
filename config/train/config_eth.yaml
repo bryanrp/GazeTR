@@ -3,7 +3,7 @@ train:
 
     params:
         # batch_size: 512
-        batch_size: 64
+        batch_size: 32
         epoch: 50
         lr: 0.0005
         decay: 0.5
@@ -18,15 +18,19 @@ train:
         # folder: model
         # model_name: GazeTR-H-ETH
         metapath: "C:\\Users\\victus\\Documents\\git-project\\capstone\\GazeTR\\GazeTR\\model"
-        folder: xgaze-random-25-10p
+        # TODO CHANGE THIS NEXT LINE
+        folder: xgaze-small-1
         model_name: GazeTR
         step: 5
 
     data:
         # image: "/userdata/ETH.zip/ETH-Gaze/Image/train"
         # label: "/userdata/ETH.zip/ETH-Gaze/Label/trainYP.label"
+        # TODO CHANGE THESE 2 LINES
         image: "C:/Users/victus/Documents/git-project/capstone/dataset-sample/xgaze-full/Image"
-        label: "C:/Users/victus/Documents/git-project/capstone/dataset-sample/xgaze-full/Label/train/v1.label"
+        label: "C:/Users/victus/Documents/git-project/capstone/dataset-sample/xgaze-small-1/Label/train.label"
+        # image: "C:/Users/victus/Documents/git-project/capstone/dataset-sample/eve-test-1/images"
+        # label: "C:/Users/victus/Documents/git-project/capstone/dataset-sample/eve-test-1/labels/train.label"
         header: True
         name: eth
         isFolder: False

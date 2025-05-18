@@ -109,7 +109,8 @@ def main(config):
 
                 # -------------- forward -------------
                 for key in data:
-                    if key != 'name' and key != 'filename': data[key] = data[key].cuda()
+                    if key != 'name' and key != 'filename' and key != 'cam_index' and key != 'frame_index' and key != 'gaze_valid' and key != 'head_valid':
+                        data[key] = data[key].cuda()
 
                 anno = anno.cuda() 
                 loss = net.loss(data, anno)

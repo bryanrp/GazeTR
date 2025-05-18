@@ -40,6 +40,8 @@ def Decode_ETH(line):
     anno.gaze2d = line[1]
     anno.head2d = line[2]
     anno.name = line[3]
+    anno.cam_index = line[4]
+    anno.frame_index = line[5]
     return anno
 
 def Decode_RTGene(line):
@@ -129,6 +131,8 @@ class trainloader(Dataset):
     data.face = img
     data.name = anno.name
     data.filename = anno.face
+    data.cam_index = anno.cam_index
+    data.frame_index = anno.frame_index
 
     return data, label
 

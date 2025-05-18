@@ -12,7 +12,7 @@ from easydict import EasyDict as edict
 import ctools, gtools
 import argparse
 
-def main(train, test):
+def main(train, test, logfilename = 'test'):
 
     # =================================> Setup <=========================
     reader = importlib.import_module("reader." + test.reader)
@@ -57,22 +57,31 @@ def main(train, test):
 
         net.cuda(); net.load_state_dict(statedict); net.eval()
 
-        length = len(dataset); accs = 0; count = 0; accs_swapped = 0
+        length = len(dataset)
 
-        logname = f"{saveiter}-test-16.log"
+        # --- initialize accumulators ---
+        errors = []
+        errors_swapped = []
+        count = 0
+
+        logname = f"{saveiter}-{logfilename}.log"
 
         outfile = open(os.path.join(logpath, logname), 'w')
-        outfile.write("filenames origins results gts\n")
+        outfile.write("filenames origins results gts cam_index frame_index\n")
 
         with torch.no_grad():
             for j, (data, label) in enumerate(dataset):
 
                 for key in data:
-                    if key != 'name' and key != 'filename': data[key] = data[key].cuda()
+                    if key != 'name' and key != 'filename' and key != 'cam_index' and key != 'frame_index':
+                        data[key] = data[key].cuda()
 
                 filenames = data["filename"]
                 names = data["name"]
                 gts = label.cuda()
+
+                cam_indices = data["cam_index"]
+                frame_indices = data["frame_index"]
            
                 gazes = net(data)
 
@@ -82,26 +91,40 @@ def main(train, test):
                     gt = gts.cpu().numpy()[k]
 
                     count += 1                
-                    accs += gtools.angular(
-                                gtools.gazeto3d(gaze),
-                                gtools.gazeto3d(gt)
-                            )
+                    err = gtools.angular(
+                            gtools.gazeto3d(gaze),
+                            gtools.gazeto3d(gt)
+                        )
+                    errors.append(err)
 
                     # Swap predicted gaze coordinates
                     gaze_swapped = np.array([gaze[1], gaze[0]])
-                    accs_swapped += gtools.angular(gtools.gazeto3d(gaze_swapped), gtools.gazeto3d(gt))
+                    err_sw = gtools.angular(
+                        gtools.gazeto3d(gaze_swapped),
+                        gtools.gazeto3d(gt)
+                    )
+                    errors_swapped.append(err_sw)
             
                     filename = [filenames[k]]
                     name = [names[k]]
                     gaze = [str(u) for u in gaze] 
                     gt = [str(u) for u in gt] 
-                    log = filename + name + [",".join(gaze)] + [",".join(gt)]
+                    cam_index = cam_indices[k]
+                    frame_index = frame_indices[k]
+                    log = filename + name + [",".join(gaze)] + [",".join(gt)] + [cam_index] + [frame_index]
                     outfile.write(" ".join(log) + "\n")
 
-            # loger = f"[{saveiter}] Total Num: {count}, avg: {accs/count}"
-            loger = f"[{saveiter}] Total Num: {count}, avg: {accs/count}, avg_swapped: {accs_swapped/count}"
-            outfile.write(loger)
-            print(loger)
+            # after all samples, compute statistics
+            mean_err = np.mean(errors)
+            std_err = np.std(errors)
+            mean_err_sw = np.mean(errors_swapped)
+            std_err_sw = np.std(errors_swapped)
+
+            summary = (f"[{saveiter}] Total Num: {count}, "
+                       f"mean: {mean_err:.4f}±{std_err:.4f}, "
+                       f"mean_swapped: {mean_err_sw:.4f}±{std_err_sw:.4f}")
+            outfile.write(summary)
+            print(summary)
         outfile.close()
 
 if __name__ == "__main__":
@@ -113,6 +136,9 @@ if __name__ == "__main__":
 
     parser.add_argument('-t', '--target', type=str,
                         help = 'config path about test')
+    
+    parser.add_argument('-l', '--logname', type=str,
+                        help = 'log name', default = 'test')
 
     args = parser.parse_args()
 
@@ -129,6 +155,4 @@ if __name__ == "__main__":
     print(ctools.DictDumps(test_conf))
     print("=======================>(End) Config for test<======================")
 
-    main(train_conf.train, test_conf.test)
-
- 
+    main(train_conf.train, test_conf.test, args.logname)

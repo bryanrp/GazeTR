@@ -11,8 +11,9 @@ test:
         # label: "/userdata/ETH.zip/ETH-Gaze/Label/trainYP.label"
         # image: "C:/Users/victus/Documents/git-project/capstone/dataset-sample/xgaze-full/Image"
         # label: "C:/Users/victus/Documents/git-project/capstone/dataset-sample/xgaze-random-25/Label/xgaze-random-25-test.label"
+        # TODO CHANGE THESE 2 LINES
         image: "C:/Users/victus/Documents/git-project/capstone/dataset-sample/xgaze-full/Image"
-        label: "C:/Users/victus/Documents/git-project/capstone/GazeTR/GazeTR/label/speedrun/xgaze-random-25-test-16.label"
+        label: "C:/Users/victus/Documents/git-project/capstone/dataset-sample/xgaze-small-0/Label/test-ex2.label"
         name: ethtrain
         header: True
         isFolder: False
