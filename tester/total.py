@@ -121,8 +121,8 @@ def main(train, test, logfilename = 'test'):
             std_err_sw = np.std(errors_swapped)
 
             summary = (f"[{saveiter}] Total Num: {count}, "
-                       f"mean: {mean_err:.4f}±{std_err:.4f}, "
-                       f"mean_swapped: {mean_err_sw:.4f}±{std_err_sw:.4f}")
+                       f"mean: {mean_err:.4f}+-{std_err:.4f}, "
+                       f"mean_swapped: {mean_err_sw:.4f}+-{std_err_sw:.4f}")
             outfile.write(summary)
             print(summary)
         outfile.close()
