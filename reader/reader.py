@@ -121,7 +121,9 @@ class trainloader(Dataset):
     line = line.strip().split(" ")
     anno = self.data.decode(line)
 
-    img = cv2.imread(os.path.join(self.data.root, anno.face))
+    img_path = os.path.join(self.data.root, anno.face)
+    img_path = img_path.replace("\\", "/")  # Ensure correct path format
+    img = cv2.imread(img_path)
     img = self.transforms(img)
 
     label = np.array(anno.gaze2d.split(",")).astype("float")
